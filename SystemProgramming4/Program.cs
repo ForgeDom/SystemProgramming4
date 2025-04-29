@@ -9,28 +9,19 @@ class Program
         int start = int.Parse(Console.ReadLine());
         Console.WriteLine("Enter second number:");
         int end = int.Parse(Console.ReadLine());
-        Console.WriteLine("Enter thread count:");
-        int threadCount = int.Parse(Console.ReadLine());
-        
-        int rangeSize = (end - start + 1) / threadCount;
-        var tasks = new Task[threadCount];
-        for (int i = 0; i < threadCount; i++)
-        {
-            int rangeStart = start + i * rangeSize;
-            int rangeEnd = (i == threadCount - 1) ? end : rangeStart + rangeSize - 1;
-            tasks[i] = Task.Run(() => PrintNumbers(rangeStart, rangeEnd));
-        }
 
-        await Task.WhenAll(tasks);
-        Console.WriteLine("Tasks completed.");
-        Console.ReadKey();
+        await PrintNumbers(start, end); 
+        Console.WriteLine("Task completed.");
     }
     static async Task PrintNumbers(int start, int end)
     {
-        for (int i = start; i <= end; i++)
+        await Task.Run(() =>
         {
-            Console.WriteLine($"Потік {Thread.CurrentThread.ManagedThreadId}: {i}");
-            Task.Delay(100).Wait(); 
-        }
+            for (int i = start; i <= end; i++)
+            {
+                Console.WriteLine(i);
+                Task.Delay(100).Wait(); 
+            }
+        });
     }
 }
