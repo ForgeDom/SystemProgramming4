@@ -3,34 +3,26 @@ using System.Threading.Tasks;
 
 class Program
 {
+    static int[] numbers = new int[10000];
+    static int max, min;
+    static double avg;
     static async Task Main(string[] args)
     {
-        Console.WriteLine("Enter first number:");
-        int start = int.Parse(Console.ReadLine());
-        Console.WriteLine("Enter second number:");
-        int end = int.Parse(Console.ReadLine());
-        Console.WriteLine("Enter thread count:");
-        int threadCount = int.Parse(Console.ReadLine());
+        Random random = new Random();
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            numbers[i] = random.Next(-10000, 10000);
+        }
         
-        int rangeSize = (end - start + 1) / threadCount;
-        var tasks = new Task[threadCount];
-        for (int i = 0; i < threadCount; i++)
-        {
-            int rangeStart = start + i * rangeSize;
-            int rangeEnd = (i == threadCount - 1) ? end : rangeStart + rangeSize - 1;
-            tasks[i] = Task.Run(() => PrintNumbers(rangeStart, rangeEnd));
-        }
-
-        await Task.WhenAll(tasks);
-        Console.WriteLine("Tasks completed.");
+        Task maxTask = Task.Run(() => max = numbers.Max());
+        Task minTask = Task.Run(() => min = numbers.Min());
+        Task avgTask = Task.Run(() => avg = numbers.Average());
+        
+        await Task.WhenAll(maxTask, minTask, avgTask);
+        
+        Console.WriteLine($"Max : {max}");
+        Console.WriteLine($"Min : {min}");
+        Console.WriteLine($"Avg : {avg}");
         Console.ReadKey();
-    }
-    static async Task PrintNumbers(int start, int end)
-    {
-        for (int i = start; i <= end; i++)
-        {
-            Console.WriteLine($"Потік {Thread.CurrentThread.ManagedThreadId}: {i}");
-            Task.Delay(100).Wait(); 
-        }
     }
 }
