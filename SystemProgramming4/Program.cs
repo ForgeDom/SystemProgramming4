@@ -1,20 +1,27 @@
 ﻿namespace SystemProgramming4;
+using System.Threading.Tasks;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        Task task = Task.Run(() => PrintNumbers());
-        Console.WriteLine("Main thread is doing other work...");
-        await task; 
+        Console.WriteLine("Enter first number:");
+        int start = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter second number:");
+        int end = int.Parse(Console.ReadLine());
+
+        await PrintNumbers(start, end); 
         Console.WriteLine("Task completed.");
     }
-    static void PrintNumbers()
+    static async Task PrintNumbers(int start, int end)
     {
-        for (int i = 1; i <= 50; i++)
+        await Task.Run(() =>
         {
-            Console.WriteLine(i);
-            Thread.Sleep(100);
-        }
+            for (int i = start; i <= end; i++)
+            {
+                Console.WriteLine(i);
+                Task.Delay(100).Wait(); 
+            }
+        });
     }
 }
